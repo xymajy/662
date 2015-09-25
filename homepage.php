@@ -2,14 +2,15 @@
 <?php 
     session_start();
     include $_SERVER['DOCUMENT_ROOT'] . '/includes/db.inc.php';
+
 	$UID = $_SESSION["userid"];
-	//echo $UID . "<br>";
-    include 'showsomething.php';
+
+	if(!$UID) header("Location:http://localhost/index.php");
 	try
 	{
-	$sql = 'SELECT * FROM usrinfo WHERE UID = :UID';
+	$sql = 'SELECT * FROM User_Info WHERE userid = :userid';
 	$s = $pdo->prepare($sql);
-	$s->bindValue(':UID',$UID);	
+	$s->bindValue(':userid',$UID);	
 	$s->execute();
 	}
 	catch (PDOException $e){
@@ -17,22 +18,20 @@
 	header("Location:http://localhost/error.html.php");
 	exit(); 
 	}
-	//echo "hfuffff" . "<br>";
+
 	$row = $s->fetch();
-	//var_dump($row);
-	//UID 	fname 	lname 	address
-	echo " Name is : " . $row['fname'] . " " . $row['lname'] . "<br>";
+
+	echo " Name is : " . $row['username'] . "<br>";
+	echo " Phone is : " . $row['phone'] . "<br>";
 	echo " Address is : " . $row['address'] . "<br>"; 
 
-if(isset($_POST['action']) and $_POST['action'] == 'cancle'){
-  	
-    //include $_SERVER['DOCUMENT_ROOT'] . '/includes/db.inc.php';
+
+
 	try
 	{
-
-	$sql = 'SELECT TID FROM workinfo WHERE UID = :UID';
+	$sql = 'SELECT * FROM Work_Info INNER JOIN Time_Info ON Time_Info.timeid = Work_Info.timeid WHERE userid = :userid';
 	$s = $pdo->prepare($sql);
-	$s->bindValue(':UID',$UID);	
+	$s->bindValue(':userid',$UID);	
 	$s->execute();
 	}
 	catch (PDOException $e){
@@ -40,22 +39,12 @@ if(isset($_POST['action']) and $_POST['action'] == 'cancle'){
 	header("Location:http://localhost/error.html.php");
 	exit(); 
 	}
-	$row = $s->fetch();
-
-	//echo $row['UID'];
-
-	if($row['UID']){
-		$_SESSION["userid"] = $row['UID'];
-		//header("Location:http://localhost/showsomething.php");
-		header("Location:http://localhost/homepage.php");
-	}else{
-
-		header("Location:http://localhost/index.php");
+	echo "<br>" . "work time:" . "<br>"; 
+	while($row = $s->fetch()){
+		echo $row['timedate'] . " " . $row['starttime'] . "-" . $row['endtime'] . "<br>";
 	}
-}
 
-
-
+    include 'homepage.html.php';
 
 
 ?>	

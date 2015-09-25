@@ -3,33 +3,15 @@ session_start();
 //setcookie("userid",NULL,time()-3600,"/");
 //$_SESSION["userid"]=0;
 unset($_SESSION["userid"]);
-unset($_SESSION["useName"]);
+unset($_SESSION["edit"]);
 
 include $_SERVER['DOCUMENT_ROOT'] . '/includes/db.inc.php';
 
-//try
-//{
 
-//  $sql = 'SELECT * FROM info';
-//  $result = $pdo->query($sql);
-
-//}
-//catch (PDOException $e)
-//{
-//  $error = 'Error fetching info: ' . $e->getMessage();
-//  include 'error.html.php';
-//  exit();
-//}
-
-//while ($row = $result->fetch())
-//{
-//  $infos[] = $row,,['name'];
-//}
-include 'login.html.php';
 
 if(isset($_POST['action']) and $_POST['action'] == 'Signin'){
   	
-    include $_SERVER['DOCUMENT_ROOT'] . '/includes/db.inc.php';
+
 	try
 	{
 	/*$sql = 'INSERT INTO info SET
@@ -39,10 +21,10 @@ if(isset($_POST['action']) and $_POST['action'] == 'Signin'){
 	$s->bindValue(':name',$_POST['my_login_name']);
 	$s->bindValue(':age',$_POST['my_login2_name']);	
 	$s->execute();*/
-	$sql = 'SELECT UID FROM pswinfo WHERE usrname = :usrname AND psw = :psw';
+	$sql = 'SELECT userid FROM User_Info WHERE userid = :userid AND userpwd = :userpwd';
 	$s = $pdo->prepare($sql);
-	$s->bindValue(':usrname',$_POST['login_name']);	
-	$s->bindValue(':psw',$_POST['login_psw']);	
+	$s->bindValue(':userid',$_POST['login_name']);	
+	$s->bindValue(':userpwd',$_POST['login_psw']);	
 	$s->execute();
 	}
 	catch (PDOException $e){
@@ -54,16 +36,25 @@ if(isset($_POST['action']) and $_POST['action'] == 'Signin'){
 
 	//echo $row['UID'];
 
-	if($row['UID']){
-		$_SESSION["userid"] = $row['UID'];
+	if($row['userid']){
+		$_SESSION["userid"] = $row['userid'];
 		//header("Location:http://localhost/showsomething.php");
-		header("Location:http://localhost/homepage.php");
-	}else{
 
-		header("Location:http://localhost/index.php");
+		header("Location:http://localhost/homepage.php");
+
+	}else{
+		$loginfo = "Fail login";
+		header("Location: .");
 	}
 }
-
-//include 'login.html.php';
-
+include 'login.html.php';
 ?>
+
+
+<form action="register.php">
+  <input type="submit" value="Regis">
+</form> 
+
+<a href="register.php" class="submit_btn" title=" click here to register
+" tabindex="4"> register
+</a>
